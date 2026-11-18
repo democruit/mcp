@@ -3071,5 +3071,125 @@
         "additionalProperties": false
       }
     }
+  ],
+  "prompts": [
+    {
+      "name": "create_my_resume",
+      "title": "Create my resume",
+      "description": "Build a resume or CV step by step from your real experience, or import an existing one, with a recommended design.",
+      "arguments": [
+        {
+          "name": "targetRole",
+          "description": "The kind of job you want, if you know it.",
+          "required": false
+        },
+        {
+          "name": "details",
+          "description": "Any experience, education, or existing resume file you want to use.",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "tailor_my_resume",
+      "title": "Tailor my resume to a job",
+      "description": "Turn one job posting into a tailored resume, cover letter and ATS report using only facts already on your saved resume. Your original resume stays untouched.",
+      "arguments": [
+        {
+          "name": "jobDescription",
+          "description": "The job posting text or a link to it.",
+          "required": false
+        },
+        {
+          "name": "resumeTitle",
+          "description": "The title of the saved resume you want to use, if known.",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "check_my_resume",
+      "title": "Check my resume for ATS",
+      "description": "Check how well applicant tracking systems can read your resume, see the specific issues found, and choose fixes backed by the report.",
+      "arguments": [
+        {
+          "name": "resumeTitle",
+          "description": "The saved resume you want checked, if known.",
+          "required": false
+        },
+        {
+          "name": "jobDescription",
+          "description": "A job posting to compare against, if you have one.",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "write_a_cover_letter",
+      "title": "Write a cover letter",
+      "description": "Draft a cover letter for a job posting from the saved resume you choose, without inventing details.",
+      "arguments": [
+        {
+          "name": "jobDescription",
+          "description": "The job posting text or a link to it.",
+          "required": false
+        },
+        {
+          "name": "resumeTitle",
+          "description": "The saved resume you want the letter to use, if known.",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "job_search_next_step",
+      "title": "What should I do next in my job search",
+      "description": "See your weekly applications, upcoming interviews and follow-ups that need attention, then pick one useful action for today.",
+      "arguments": [
+        {
+          "name": "goal",
+          "description": "What you want to focus on, such as applications, interviews, or follow-ups.",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "name": "resume",
+      "uriTemplate": "democruit://resumes/{id}",
+      "description": "A saved resume (read-only JSON, owner only).",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "cover letter",
+      "uriTemplate": "democruit://cover-letters/{id}",
+      "description": "A saved cover letter (read-only JSON, owner only).",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "ATS report",
+      "uriTemplate": "democruit://ats-reports/{id}",
+      "description": "A saved ATS check report (read-only JSON, owner only).",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "job application",
+      "uriTemplate": "democruit://job-applications/{id}",
+      "description": "A tracked job application (read-only JSON, owner only).",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "personal website",
+      "uriTemplate": "democruit://personal-websites/{id}",
+      "description": "A personal website (read-only JSON, owner only).",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "Typed tool input contract",
+      "uriTemplate": "democruit://contracts/{memberTool}",
+      "description": "Full typed field-edit contract for a document edit tool.",
+      "mimeType": "application/json"
+    }
   ]
 }
