@@ -8,7 +8,7 @@
   "cloudEndpoint": "https://mcp.democruit.com/mcp",
   "category": "productivity",
   "icon": "https://democruit.com/favicon-512x512.png",
-  "description": "Manage resumes, cover letters, job tracking, ATS checks and written interview prep from your AI client.",
+  "description": "Your career companion for ATS checks, resumes, cover letters, job tracking, websites, and more.",
   "tags": [
     "resume",
     "cv",
