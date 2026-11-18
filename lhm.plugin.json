@@ -1,0 +1,3075 @@
+{
+  "identifier": "democruit-mcp",
+  "name": "Democruit",
+  "version": "1.0.0",
+  "author": "Democruit",
+  "authorUrl": "https://democruit.com",
+  "homepage": "https://democruit.com/mcp",
+  "cloudEndpoint": "https://mcp.democruit.com/mcp",
+  "category": "productivity",
+  "icon": "https://democruit.com/favicon-512x512.png",
+  "description": "Manage resumes, cover letters, job tracking, ATS checks and written interview prep from your AI client.",
+  "tags": [
+    "resume",
+    "cv",
+    "cover-letter",
+    "ats",
+    "job-search",
+    "interview-prep",
+    "career"
+  ],
+  "tools": [
+    {
+      "name": "get_resume_statistics",
+      "description": "Show recorded view statistics for a saved resume over the service's available history. There is no date-range filter. Returns: resume viewing statistics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "resumeId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "restore_resume_version",
+      "description": "Restore the resume content saved before an import. Returns: restored resume ID and an undo version ID. Preview first, then repeat identical inputs with confirm: true and the preview confirmationToken after explicit conversation confirmation. Saves the current content as another undo version.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "resumeId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The resume to restore, from the import response."
+          },
+          "versionId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The saved version ID returned by the import or restore response."
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Set to true only after the user has explicitly confirmed this action in the conversation. Describe what will change to the user first."
+          },
+          "confirmationToken": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Token returned by the preview. Send it unchanged with confirm: true; it is valid for 15 minutes and only for the previewed inputs."
+          }
+        },
+        "required": [
+          "resumeId",
+          "versionId",
+          "confirm"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "summarize_resume",
+      "description": "Give a short overview of a saved resume. Use this when the user wants to understand its main strengths before making changes. Returns: resume strengths and a short factual overview.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "resumeId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_document_templates",
+      "description": "List designs for operation=resume, cover_letter or personal_website. Permission is checked for the selected document type. Returns: design IDs, names, descriptions and preview links with pagination.nextCursor when another page exists.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "resume",
+              "cover_letter",
+              "personal_website"
+            ],
+            "description": "Choose the requested operation. Each operation has its own typed inputs below."
+          },
+          "detail": {
+            "type": "boolean",
+            "description": "Optional. Omit to use the default compact response; do not ask the user unless they request this setting.",
+            "default": false
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Optional. Omit for the default first page; do not ask the user for a cursor. Otherwise use the opaque nextCursor from the previous page."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20,
+            "description": "Maximum saved items per page, from 1 to 100. Defaults to 20."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_workspace",
+      "description": "View the career workspace, profile, or suggested next task. On first contact use summary to check onboarding before continuing the requested task. Operations: summary | agenda | profile. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "summary",
+              "agenda",
+              "profile"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "detail": {
+            "type": "boolean",
+            "description": "Optional. Omit to use the default compact response; do not ask the user unless they request this setting.",
+            "default": false
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Optional. Omit to use the default first page; do not ask the user unless they request this setting."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_allowance",
+      "description": "Check one plan allowance (research, interview, ATS, resumes, cover letters, job applications, websites, resume imports, AI tailoring, photo improving, interview reviews, live interviews) or use all for every limit at once. Operations: research | interview | ats | resumes | cover_letters | applications | websites | resume_imports | resume_tailoring | image_improver | interview_reviews | interview_live | all. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "research",
+              "interview",
+              "ats",
+              "resumes",
+              "cover_letters",
+              "applications",
+              "websites",
+              "resume_imports",
+              "resume_tailoring",
+              "image_improver",
+              "interview_reviews",
+              "interview_live",
+              "all"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_account",
+      "description": "Change the requested profile or account preference. Operations: profile | picture | view | language | weekly_goal | appearance. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "profile",
+              "picture",
+              "view",
+              "language",
+              "weekly_goal",
+              "appearance"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "firstName": {
+            "type": "string",
+            "description": "The first name supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "experienceRange": {
+            "type": "string",
+            "enum": [
+              "0-1",
+              "2-4",
+              "5-9",
+              "10-14",
+              "15+"
+            ],
+            "description": "The experience range supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "assetId": {
+            "type": "string",
+            "description": "Saved asset identifier returned by its list or create tool."
+          },
+          "assistantDefaultMode": {
+            "enum": [
+              "assistant",
+              "form"
+            ],
+            "description": "Optional. Omit to use the current account default mode; do not ask the user unless they request this setting.",
+            "type": "string"
+          },
+          "language": {
+            "type": "string",
+            "description": "Optional. Omit to infer the posting language, else conversation language, else account language; do not ask the user unless they request this setting.",
+            "enum": [
+              "en",
+              "es",
+              "tr",
+              "ar",
+              "pt",
+              "de",
+              "fr"
+            ]
+          },
+          "weeklyGoal": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "The weekly goal supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "colorScheme": {
+            "enum": [
+              "light",
+              "dark",
+              "system"
+            ],
+            "description": "Optional. Omit to use the system default appearance; do not ask the user unless they request this setting.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_consents",
+      "description": "Change the user's privacy and communication consents. Requires conversation confirmation. Operations: consents. Returns the response envelope; nextActions list what the user can do next, primary first. Use confirm: false for a preview, then repeat identical inputs with confirm: true and the preview confirmationToken after the user confirms.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "consents"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "consents": {
+            "type": "object",
+            "properties": {
+              "isMarketingConsent": {
+                "type": "boolean"
+              },
+              "isAccountCreationConsent": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "description": "The consents supplied by the user. Follow the type and allowed values in this schema.",
+            "minProperties": 1
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Set to true only after the user has explicitly confirmed this action in the conversation. Describe what will change to the user first."
+          },
+          "confirmationToken": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Token returned by the preview. Send it unchanged with confirm: true; it is valid for 15 minutes and only for the previewed inputs."
+          }
+        },
+        "required": [
+          "operation",
+          "confirm"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_items",
+      "description": "List saved items by operation, with limit and cursor pagination. Ask by title if a selection is needed. Operations: resumes | cover_letters | websites | applications | ats_reports | research | interviews | submissions. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "resumes",
+              "cover_letters",
+              "websites",
+              "applications",
+              "ats_reports",
+              "research",
+              "interviews",
+              "submissions"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "detail": {
+            "type": "boolean",
+            "description": "Optional. Omit to use the default compact response; do not ask the user unless they request this setting.",
+            "default": false
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Optional. Omit for the default first page; do not ask the user for a cursor. Otherwise use the opaque nextCursor from the previous page."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20,
+            "description": "Maximum saved items per page, from 1 to 100. Defaults to 20."
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "saved",
+              "applied",
+              "interviewing",
+              "offer",
+              "closed"
+            ],
+            "description": "Only applications at this stage."
+          },
+          "company": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Match part of the company name, ignoring case."
+          },
+          "resumeId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Only reports for this saved resume. Omit to list all reports."
+          },
+          "jobApplicationId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "personalWebsiteId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_item",
+      "description": "Read one saved item. Set detail=true before editing to obtain complete content. Operations: resume | cover_letter | website | application | ats_report | research | interview | job_analysis. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "resume",
+              "cover_letter",
+              "website",
+              "application",
+              "ats_report",
+              "research",
+              "interview",
+              "job_analysis"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "resumeId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ],
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "detail": {
+            "type": "boolean",
+            "description": "Optional. Omit to use the default compact response; do not ask the user unless they request this setting.",
+            "default": false
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Optional. Omit to use the default first page; do not ask the user unless they request this setting."
+          },
+          "coverLetterId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ],
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "personalWebsiteId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "jobApplicationId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "reportId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "researchId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "pollStartedAt": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Use the server-provided polling window timestamp from the previous next action."
+          },
+          "sessionId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "questionId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Saved question identifier returned by its list or create tool."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_item",
+      "description": "Create new career documents or track applications from real user facts. New letter generation needs no confirmation; existing wording is never overwritten here. Application kits need a stable idempotencyKey. Operations: resume | cover_letter | website | website_from_resume | application | applications | application_kit | track_kit | duplicate_resume | duplicate_letter | duplicate_website. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "resume",
+              "cover_letter",
+              "website",
+              "website_from_resume",
+              "application",
+              "applications",
+              "application_kit",
+              "track_kit",
+              "duplicate_resume",
+              "duplicate_letter",
+              "duplicate_website"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "title": {
+            "type": "string",
+            "description": "Optional. Omit to auto-generate a title in the document language; the user can rename later; do not ask the user unless they request this setting."
+          },
+          "template": {
+            "type": "string",
+            "description": "Optional. Omit to use the product default template; do not ask the user unless they request this setting."
+          },
+          "referenceResume": {
+            "type": "string",
+            "description": "The reference resume supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "targetRole": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional. Omit to generate a default title from document type and date; do not ask for a role solely to name the document."
+          },
+          "language": {
+            "type": "string",
+            "description": "Optional. Omit to infer the posting language, else conversation language, else account language; do not ask the user unless they request this setting.",
+            "enum": [
+              "af",
+              "sq",
+              "am",
+              "ar",
+              "bn",
+              "bg",
+              "ca",
+              "zh-CN",
+              "zh-TW",
+              "cs",
+              "da",
+              "nl",
+              "en-US",
+              "fi",
+              "fr",
+              "de",
+              "el",
+              "he",
+              "hi",
+              "hu",
+              "id",
+              "it",
+              "ja",
+              "kn",
+              "km",
+              "ko",
+              "lv",
+              "lt",
+              "ms",
+              "ml-IN",
+              "mr",
+              "ne-NP",
+              "no",
+              "or",
+              "fa",
+              "pl",
+              "pt-PT",
+              "pt-BR",
+              "ro",
+              "ru",
+              "sr",
+              "es-ES",
+              "sv-SE",
+              "ta",
+              "te",
+              "th",
+              "tr",
+              "uk",
+              "uz",
+              "vi",
+              "en",
+              "es",
+              "pt"
+            ]
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Stable client-generated key. Reuse for retries to return the same saved result for 24 hours."
+          },
+          "resumeId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ],
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            ],
+            "description": "The company supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "jobDescription": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60000
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 12500,
+                "description": "The job description supplied by the user. Follow the type and allowed values in this schema."
+              },
+              {
+                "type": "string",
+                "maxLength": 12500,
+                "description": "The job description supplied by the user. Follow the type and allowed values in this schema."
+              }
+            ],
+            "description": "If supplied, generate the new letter from the linked resume and this real job description; otherwise create a blank draft. Generating a new letter does not require confirmation; replacing saved wording does."
+          },
+          "websiteType": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "personal",
+                  "portfolio",
+                  "professional"
+                ]
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Optional. Omit to use the professional website default; do not ask the user unless they request this setting."
+          },
+          "targetAudience": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "recruiters",
+                  "clients",
+                  "general",
+                  "creative"
+                ]
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Optional. Omit to use the general audience default; do not ask the user unless they request this setting."
+          },
+          "sourceResumeId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Create from this saved resume instead of a blank website."
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            ],
+            "description": "The role supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "saved",
+              "applied",
+              "interviewing",
+              "offer",
+              "closed"
+            ],
+            "description": "The stage supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "location": {
+            "type": "string",
+            "description": "The location supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "workModel": {
+            "type": "string",
+            "enum": [
+              "remote",
+              "hybrid",
+              "onsite"
+            ],
+            "description": "The work model supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "jobUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "maxLength": 2048
+              }
+            ],
+            "description": "The job url supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "salaryRange": {
+            "type": "string",
+            "description": "The salary range supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "applicationDeadline": {
+            "type": "string",
+            "description": "The application deadline supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "notes": {
+            "type": "string",
+            "description": "The notes supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "fullDescription": {
+            "type": "string",
+            "description": "The full description supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "company": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "role": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "stage": {
+                  "type": "string",
+                  "enum": [
+                    "saved",
+                    "applied",
+                    "interviewing",
+                    "offer",
+                    "closed"
+                  ]
+                },
+                "location": {
+                  "type": "string"
+                },
+                "locations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "workModel": {
+                  "type": "string",
+                  "enum": [
+                    "remote",
+                    "hybrid",
+                    "onsite"
+                  ]
+                },
+                "jobUrl": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": ""
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "fullDescription": {
+                  "type": "string"
+                },
+                "companyLogoUrl": {
+                  "type": "string"
+                },
+                "companyUrl": {
+                  "type": "string"
+                },
+                "applicationDeadline": {
+                  "type": "string"
+                },
+                "notes": {
+                  "type": "string"
+                },
+                "salaryRange": {
+                  "type": "string"
+                },
+                "employmentType": {
+                  "type": "string",
+                  "enum": [
+                    "full_time",
+                    "part_time",
+                    "contract",
+                    "internship"
+                  ]
+                },
+                "seniority": {
+                  "type": "string"
+                },
+                "skills": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "postedDate": {
+                  "type": "string"
+                },
+                "jobSource": {
+                  "type": "string"
+                },
+                "externalJobId": {
+                  "type": "string"
+                },
+                "originalUrl": {
+                  "type": "string"
+                },
+                "dateSaved": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "hidden": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "company",
+                "role"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 50,
+            "description": "The applications supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "coverLetterId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "personalWebsiteId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_item",
+      "description": "Edit a saved document or application using the selected operation. First-time letter generation on an empty draft is allowed; generated replacements require conversation confirmation. For document field edits read the item with detail=true for array indexes and pass an exact path (a wrong path returns the valid ones; democruit://contracts/{memberTool} lists them all), or use guided_turn to collect facts. Use fix_resume for ATS report fixes. Operations: resume_field | resume_experience | resume_education | resume_template | resume_picture | resume_lock | resume_generate | resume_restore | letter_field | letter_regenerate | letter_resume | letter_template | website_field | website_template | website_picture | website_lock | website_generate | application | stage. Returns the response envelope; nextActions list what the user can do next, primary first. Use confirm: false for a preview, then repeat identical inputs with confirm: true and the preview confirmationToken after the user confirms.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "resume_field",
+              "resume_experience",
+              "resume_education",
+              "resume_template",
+              "resume_picture",
+              "resume_lock",
+              "resume_generate",
+              "resume_restore",
+              "letter_field",
+              "letter_regenerate",
+              "letter_resume",
+              "letter_template",
+              "website_field",
+              "website_template",
+              "website_picture",
+              "website_lock",
+              "website_generate",
+              "application",
+              "stage"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "resumeId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "description": "The resume to restore, from the import response."
+              }
+            ],
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Exact editable path, for example sections.experience.items.0.keyAchievements.1.bulletPoint (indexes start at zero). An invalid path returns the valid paths for that section. Use guided_turn when facts are missing."
+          },
+          "value": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "object",
+              "array",
+              "null"
+            ],
+            "description": "Typed value for that exact path, validated against the full member contract before execution."
+          },
+          "experienceId": {
+            "type": "string",
+            "description": "Existing experience item id when updating a saved role."
+          },
+          "company": {
+            "type": "string",
+            "description": "The company supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "position": {
+            "type": "string",
+            "description": "The position supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "location": {
+            "type": "string",
+            "description": "The location supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "startMonth": {
+            "type": "string",
+            "description": "01-12"
+          },
+          "startYear": {
+            "type": "string",
+            "description": "YYYY"
+          },
+          "endMonth": {
+            "type": "string",
+            "description": "01-12"
+          },
+          "endYear": {
+            "type": "string",
+            "description": "YYYY"
+          },
+          "isCurrentRole": {
+            "type": "boolean",
+            "description": "The is current role supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "Full-time",
+              "Part-time",
+              "Contract",
+              "Internship",
+              "Freelance",
+              "Temporary",
+              "Volunteer"
+            ],
+            "description": "The employment type supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "locationType": {
+            "type": "string",
+            "enum": [
+              "On-site",
+              "Remote",
+              "Hybrid"
+            ],
+            "description": "The location type supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "bulletPoints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Plain-text achievement bullets stored as keyAchievements.bulletPoint."
+          },
+          "replaceBullets": {
+            "type": "boolean",
+            "description": "Optional. Omit to use the default of false and append bullets; do not ask the user unless they request this setting.",
+            "default": false
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Set to true only after the user has explicitly confirmed this action in the conversation. Describe what will change to the user first."
+          },
+          "confirmationToken": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Token returned by the preview. Send it unchanged with confirm: true; it is valid for 15 minutes and only for the previewed inputs."
+          },
+          "educationId": {
+            "type": "string",
+            "description": "Existing education item id when updating a saved entry."
+          },
+          "institution": {
+            "type": "string",
+            "description": "The institution supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "studyType": {
+            "type": "string",
+            "description": "Degree or credential type, such as Bachelor of Science."
+          },
+          "area": {
+            "type": "string",
+            "description": "Field of study."
+          },
+          "isCurrentlyStudying": {
+            "type": "boolean",
+            "description": "The is currently studying supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "score": {
+            "type": "string",
+            "description": "The score supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "template": {
+            "type": "string",
+            "description": "Optional. Omit to use the product default template; do not ask the user unless they request this setting."
+          },
+          "assetId": {
+            "type": "string",
+            "description": "Saved asset identifier returned by its list or create tool."
+          },
+          "locked": {
+            "type": "boolean",
+            "description": "The locked supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "section": {
+            "type": "string",
+            "enum": [
+              "summary",
+              "headline"
+            ],
+            "description": "Optional. Omit to use the default summary section; do not ask the user unless they request this setting."
+          },
+          "versionId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The saved version ID returned by the import or restore response."
+          },
+          "coverLetterId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "jobDescription": {
+            "type": "string",
+            "description": "The actual job description supplied by the user. Omit only when already saved on this cover letter."
+          },
+          "whyThisRole": {
+            "type": "string",
+            "description": "The why this role supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "achievements": {
+            "type": "string",
+            "description": "The achievements supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "skills": {
+            "type": "string",
+            "description": "The skills supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "connection": {
+            "type": "string",
+            "description": "The connection supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "personalWebsiteId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "field": {
+            "enum": [
+              "headline",
+              "bio",
+              "experience",
+              "projects",
+              "skills"
+            ],
+            "type": "string",
+            "description": "The field supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "fieldValue": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "object",
+              "array",
+              "null"
+            ],
+            "description": "The field value supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "formValues": {
+            "type": "object",
+            "description": "The form values supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "previousAttempts": {
+            "type": "array",
+            "description": "The previous attempts supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "jobApplicationId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "updates": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "company": {
+                "type": "string",
+                "minLength": 1
+              },
+              "role": {
+                "type": "string",
+                "minLength": 1
+              },
+              "location": {
+                "type": "string"
+              },
+              "locations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "workModel": {
+                "type": "string",
+                "enum": [
+                  "remote",
+                  "hybrid",
+                  "onsite"
+                ]
+              },
+              "jobUrl": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": ""
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "fullDescription": {
+                "type": "string"
+              },
+              "companyLogoUrl": {
+                "type": "string"
+              },
+              "companyUrl": {
+                "type": "string"
+              },
+              "applicationDeadline": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string"
+              },
+              "salaryRange": {
+                "type": "string"
+              },
+              "employmentType": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "full_time",
+                      "part_time",
+                      "contract",
+                      "internship"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "seniority": {
+                "type": "string"
+              },
+              "skills": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "postedDate": {
+                "type": "string"
+              },
+              "jobSource": {
+                "type": "string"
+              },
+              "externalJobId": {
+                "type": "string"
+              },
+              "originalUrl": {
+                "type": "string"
+              },
+              "dateSaved": {
+                "type": "string"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hidden": {
+                "type": "boolean"
+              },
+              "applicationDate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "applicationSource": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "job_board",
+                      "company_site",
+                      "referral",
+                      "recruiter",
+                      "agency",
+                      "other"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "isFollowUpSent": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "isThankYouLetterSent": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "interviewDate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "interviewTime": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "interviewType": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "general",
+                      "technical",
+                      "behavioral"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "interviewerName": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reminder": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "half_of_hour",
+                      "one_hour",
+                      "three_hours",
+                      "one_day",
+                      "one_week",
+                      "none"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "offerDate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "responseDeadline": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "baseSalary": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "equity": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "signingBonus": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "closedOutcome": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "accepted",
+                      "rejected",
+                      "withdrawn",
+                      "ghosted",
+                      "rescinded"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "startDate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "negotiationOutcome": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "yes_better_offer",
+                      "yes_same_offer",
+                      "no_accepted_as_is"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "declineReason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "better_offer",
+                      "compensation_low",
+                      "poor_culture_fit",
+                      "role_mismatch",
+                      "work_life_balance",
+                      "location_remote_policy",
+                      "other"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "withdrawReason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "accepted_another",
+                      "company_red_flags",
+                      "personal_circumstances",
+                      "other"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "rescindedReason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "hiring_freeze",
+                      "no_reason_given",
+                      "position_eliminated",
+                      "failed_background_check",
+                      "went_another_direction",
+                      "other"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "closedNotes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "minProperties": 1,
+            "description": "The updates supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "saved",
+              "applied",
+              "interviewing",
+              "offer",
+              "closed"
+            ],
+            "description": "The stage supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "applicationDate": {
+            "type": "string",
+            "description": "The application date supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "interviewDate": {
+            "type": "string",
+            "description": "The interview date supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "interviewTime": {
+            "type": "string",
+            "description": "The interview time supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "interviewType": {
+            "type": "string",
+            "description": "The interview type supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "offerDate": {
+            "type": "string",
+            "description": "The offer date supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "responseDeadline": {
+            "type": "string",
+            "description": "The response deadline supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "closedOutcome": {
+            "type": "string",
+            "description": "The closed outcome supplied by the user. Follow the type and allowed values in this schema."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_items",
+      "description": "Permanently delete the selected saved information. Always requires conversation confirmation. Operations: resumes | cover_letters | websites | applications | contact | document | interaction | research | job_analysis | ats_reports | interviews | submission. Returns the response envelope; nextActions list what the user can do next, primary first. Use confirm: false for a preview, then repeat identical inputs with confirm: true and the preview confirmationToken after the user confirms.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "resumes",
+              "cover_letters",
+              "websites",
+              "applications",
+              "contact",
+              "document",
+              "interaction",
+              "research",
+              "job_analysis",
+              "ats_reports",
+              "interviews",
+              "submission"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "resumeId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Set to true only after the user has explicitly confirmed this action in the conversation. Describe what will change to the user first."
+          },
+          "confirmationToken": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Token returned by the preview. Send it unchanged with confirm: true; it is valid for 15 minutes and only for the previewed inputs."
+          },
+          "ids": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "maxItems": 50,
+                "uniqueItems": true
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "maxItems": 50,
+                "uniqueItems": true,
+                "description": "ATS report IDs from list_items operation=ats_reports."
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "maxItems": 50,
+                "uniqueItems": true,
+                "description": "Written interview practice session IDs from list_items operation=interviews."
+              }
+            ],
+            "description": "Delete these saved item IDs together after conversation confirmation. Supply either this list or the single item identifier."
+          },
+          "coverLetterId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "personalWebsiteId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "jobApplicationId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "contactId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "documentId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "interactionId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "researchId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "analysisId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "submissionId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          }
+        },
+        "required": [
+          "operation",
+          "confirm"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "export_pdf",
+      "description": "Generate a PDF of a saved document or report. Requires both read and write access for that document type. Operations: resume | cover_letter | ats_report | research. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "resume",
+              "cover_letter",
+              "ats_report",
+              "research"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "resumeId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "coverLetterId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "reportId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "researchId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "import_resume_text",
+      "description": "Import the entire resume text extracted by the chat host. Create a NEW resume by default. To replace saved content provide resumeId, replace: true and confirm: true after conversation confirmation; an encrypted undo version is saved. Operations: import. Returns the response envelope; nextActions list what the user can do next, primary first. Use confirm: false for a preview, then repeat identical inputs with confirm: true and the preview confirmationToken after the user confirms.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "import"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "resumeText": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30000,
+            "description": "Entire resume content extracted from the attached file. Preserve all facts and sections; do not summarize or invent details."
+          },
+          "resumeId": {
+            "type": "string",
+            "description": "Target for replacement only when replace is true. Otherwise ignored and a new resume is created."
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Optional. Omit to auto-generate a title in the document language; the user can rename later; do not ask the user unless they request this setting."
+          },
+          "replace": {
+            "type": "boolean",
+            "description": "Defaults to false: create a NEW resume even when resumeId is supplied. Set true only to replace the specified resume; requires confirm: true. Saves an undo version."
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Set to true only after the user has explicitly confirmed this action in the conversation. Describe what will change to the user first."
+          },
+          "confirmationToken": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Token returned by the preview. Send it unchanged with confirm: true; it is valid for 15 minutes and only for the previewed inputs."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "guided_turn",
+      "description": "Collect real facts, one question or one small group of questions at a time. Start with an entity, then answer using the returned draftId, revision and questionId. Supports skip, back and cancel; once canSaveNow is set, action=save stores the answers so far. Retain entity for expiry recovery. When the response lists several questions, ask them together in one step and answer once with values keyed by questionId. Operations: start | answer. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "start",
+              "answer"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "entity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "application_kit",
+                  "ats_check",
+                  "interview_review",
+                  "linkedin_headline",
+                  "linkedin_about",
+                  "resignation_letter",
+                  "networking_message",
+                  "resume_bullet",
+                  "resume",
+                  "resume_contact",
+                  "cover_letter",
+                  "cover_letter_generate",
+                  "personal_website",
+                  "personal_website_from_resume",
+                  "job_application",
+                  "job_contact",
+                  "job_document",
+                  "job_interaction",
+                  "job_follow_up",
+                  "job_thank_you",
+                  "interview_practice",
+                  "email",
+                  "company_research",
+                  "resume_awards",
+                  "resume_certifications",
+                  "resume_education",
+                  "resume_experience",
+                  "resume_volunteer",
+                  "resume_interests",
+                  "resume_languages",
+                  "resume_projects",
+                  "resume_publications",
+                  "resume_references",
+                  "resume_skills",
+                  "resume_summary",
+                  "resume_custom",
+                  "website_header",
+                  "website_hero",
+                  "website_contactSocial",
+                  "website_experience",
+                  "website_education",
+                  "website_projects",
+                  "website_certifications",
+                  "website_skills",
+                  "website_languages",
+                  "website_awards",
+                  "website_publications",
+                  "website_testimonials",
+                  "website_volunteering",
+                  "website_services",
+                  "website_gallery",
+                  "website_stats",
+                  "website_faq",
+                  "website_clients",
+                  "website_ctaBanner",
+                  "website_blog",
+                  "website_custom",
+                  "website_contact",
+                  "website_footer",
+                  "cover_letter_personalInfo",
+                  "cover_letter_jobDetails",
+                  "cover_letter_personalization",
+                  "cover_letter_content",
+                  "job_stage_applied",
+                  "job_stage_interviewing",
+                  "job_stage_offer",
+                  "job_stage_closed"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "application_kit",
+                  "ats_check",
+                  "interview_review",
+                  "linkedin_headline",
+                  "linkedin_about",
+                  "resignation_letter",
+                  "networking_message",
+                  "resume_bullet",
+                  "resume",
+                  "resume_contact",
+                  "cover_letter",
+                  "cover_letter_generate",
+                  "personal_website",
+                  "personal_website_from_resume",
+                  "job_application",
+                  "job_contact",
+                  "job_document",
+                  "job_interaction",
+                  "job_follow_up",
+                  "job_thank_you",
+                  "interview_practice",
+                  "email",
+                  "company_research",
+                  "resume_awards",
+                  "resume_certifications",
+                  "resume_education",
+                  "resume_experience",
+                  "resume_volunteer",
+                  "resume_interests",
+                  "resume_languages",
+                  "resume_projects",
+                  "resume_publications",
+                  "resume_references",
+                  "resume_skills",
+                  "resume_summary",
+                  "resume_custom",
+                  "website_header",
+                  "website_hero",
+                  "website_contactSocial",
+                  "website_experience",
+                  "website_education",
+                  "website_projects",
+                  "website_certifications",
+                  "website_skills",
+                  "website_languages",
+                  "website_awards",
+                  "website_publications",
+                  "website_testimonials",
+                  "website_volunteering",
+                  "website_services",
+                  "website_gallery",
+                  "website_stats",
+                  "website_faq",
+                  "website_clients",
+                  "website_ctaBanner",
+                  "website_blog",
+                  "website_custom",
+                  "website_contact",
+                  "website_footer",
+                  "cover_letter_personalInfo",
+                  "cover_letter_jobDetails",
+                  "cover_letter_personalization",
+                  "cover_letter_content",
+                  "job_stage_applied",
+                  "job_stage_interviewing",
+                  "job_stage_offer",
+                  "job_stage_closed"
+                ],
+                "description": "Entity from the original draft, used to restart it if expired."
+              }
+            ],
+            "description": "The entity supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "language": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 20,
+            "description": "Optional. Omit to infer the posting language, else conversation language, else account language; do not ask the user unless they request this setting.",
+            "enum": [
+              "af",
+              "sq",
+              "am",
+              "ar",
+              "bn",
+              "bg",
+              "ca",
+              "zh-CN",
+              "zh-TW",
+              "cs",
+              "da",
+              "nl",
+              "en-US",
+              "fi",
+              "fr",
+              "de",
+              "el",
+              "he",
+              "hi",
+              "hu",
+              "id",
+              "it",
+              "ja",
+              "kn",
+              "km",
+              "ko",
+              "lv",
+              "lt",
+              "ms",
+              "ml-IN",
+              "mr",
+              "ne-NP",
+              "no",
+              "or",
+              "fa",
+              "pl",
+              "pt-PT",
+              "pt-BR",
+              "ro",
+              "ru",
+              "sr",
+              "es-ES",
+              "sv-SE",
+              "ta",
+              "te",
+              "th",
+              "tr",
+              "uk",
+              "uz",
+              "vi",
+              "en",
+              "es",
+              "pt"
+            ]
+          },
+          "targetId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Saved target identifier returned by its list or create tool."
+          },
+          "pastedText": {
+            "type": "string",
+            "maxLength": 60000,
+            "description": "The pasted text supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "draftId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Saved draft identifier returned by its list or create tool."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The revision supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "questionId": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Saved question identifier returned by its list or create tool."
+          },
+          "value": {
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ],
+            "maxLength": 60000,
+            "description": "The value supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "values": {
+            "type": "object",
+            "description": "Answers to several returned questions at once, keyed by questionId. Use it when the response lists questions; send only what the user actually said and omit optional questions they did not answer.",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ],
+              "maxLength": 60000
+            },
+            "maxProperties": 8
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "answer",
+              "skip",
+              "back",
+              "cancel",
+              "save"
+            ],
+            "description": "The action supplied by the user. Follow the type and allowed values in this schema."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_resume",
+      "description": "Run an ATS check of a saved resume against a job. Read an existing report with get_item operation=ats_report. Use fix_resume to apply report-supported fixes. Operations: check. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "check"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "resumeId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "jobDescription": {
+            "type": "string",
+            "description": "The job description supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "language": {
+            "type": "string",
+            "description": "Optional. Omit to infer the posting language, else conversation language, else account language; do not ask the user unless they request this setting.",
+            "enum": [
+              "af",
+              "sq",
+              "am",
+              "ar",
+              "bn",
+              "bg",
+              "ca",
+              "zh-CN",
+              "zh-TW",
+              "cs",
+              "da",
+              "nl",
+              "en-US",
+              "fi",
+              "fr",
+              "de",
+              "el",
+              "he",
+              "hi",
+              "hu",
+              "id",
+              "it",
+              "ja",
+              "kn",
+              "km",
+              "ko",
+              "lv",
+              "lt",
+              "ms",
+              "ml-IN",
+              "mr",
+              "ne-NP",
+              "no",
+              "or",
+              "fa",
+              "pl",
+              "pt-PT",
+              "pt-BR",
+              "ro",
+              "ru",
+              "sr",
+              "es-ES",
+              "sv-SE",
+              "ta",
+              "te",
+              "th",
+              "tr",
+              "uk",
+              "uz",
+              "vi",
+              "en",
+              "es",
+              "pt"
+            ]
+          },
+          "assetId": {
+            "type": "string",
+            "description": "Saved asset identifier returned by its list or create tool."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fix_resume",
+      "description": "Apply fixes supported by a saved ATS report to the resume. Requires conversation confirmation. Operations: fix. Returns the response envelope; nextActions list what the user can do next, primary first. Use confirm: false for a preview, then repeat identical inputs with confirm: true and the preview confirmationToken after the user confirms.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "fix"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "reportId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "issueTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "tense_inconsistency",
+                "spelling_errors",
+                "grammar_errors",
+                "first_person_usage",
+                "irrelevant_personal_info",
+                "references_section_present"
+              ]
+            },
+            "description": "The issue types supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "shortReason": {
+            "type": "string",
+            "description": "The short reason supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "evidenceReferences": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sectionId": {
+                  "type": "string"
+                },
+                "itemId": {
+                  "type": "string"
+                },
+                "bulletPointId": {
+                  "type": "string"
+                },
+                "fieldKey": {
+                  "type": "string"
+                },
+                "fieldId": {
+                  "type": "string"
+                },
+                "snippet": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "sectionId",
+                "snippet"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The evidence references supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "saveSequence": {
+            "type": "number",
+            "description": "Optional. Omit to let the server use the latest saved version. Supply it only as the sequence you last read, to detect concurrent edits; do not ask the user unless they request this setting."
+          },
+          "criterionKey": {
+            "type": "string",
+            "description": "The criterion key supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "sourceIssueKey": {
+            "type": "string",
+            "description": "The source issue key supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Set to true only after the user has explicitly confirmed this action in the conversation. Describe what will change to the user first."
+          },
+          "confirmationToken": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Token returned by the preview. Send it unchanged with confirm: true; it is valid for 15 minutes and only for the previewed inputs."
+          }
+        },
+        "required": [
+          "operation",
+          "confirm"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "research_company",
+      "description": "Start company research from the real company name and website. Poll get_item operation=research every 5 seconds for up to 10 minutes until ready or failed. Use continue_company_research to confirm, choose a candidate or refresh. Operations: create. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "create"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "company_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "The company name supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "company_domain": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048,
+            "description": "The company domain supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "jobId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Saved job identifier returned by its list or create tool."
+          },
+          "job_url": {
+            "type": "string",
+            "maxLength": 2048,
+            "description": "The job url supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "job_description": {
+            "type": "string",
+            "maxLength": 60000,
+            "description": "The job description supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "language": {
+            "type": "string",
+            "description": "Optional. Omit to infer the posting language, else conversation language, else account language; do not ask the user unless they request this setting.",
+            "enum": [
+              "af",
+              "sq",
+              "am",
+              "ar",
+              "bn",
+              "bg",
+              "ca",
+              "zh-CN",
+              "zh-TW",
+              "cs",
+              "da",
+              "nl",
+              "en-US",
+              "fi",
+              "fr",
+              "de",
+              "el",
+              "he",
+              "hi",
+              "hu",
+              "id",
+              "it",
+              "ja",
+              "kn",
+              "km",
+              "ko",
+              "lv",
+              "lt",
+              "ms",
+              "ml-IN",
+              "mr",
+              "ne-NP",
+              "no",
+              "or",
+              "fa",
+              "pl",
+              "pt-PT",
+              "pt-BR",
+              "ro",
+              "ru",
+              "sr",
+              "es-ES",
+              "sv-SE",
+              "ta",
+              "te",
+              "th",
+              "tr",
+              "uk",
+              "uz",
+              "vi",
+              "en",
+              "es",
+              "pt"
+            ]
+          },
+          "user_context": {
+            "type": "object",
+            "properties": {
+              "target_role": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "seniority": {
+                "type": "string",
+                "maxLength": 100
+              }
+            },
+            "additionalProperties": false,
+            "description": "The user context supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Stable client-generated key. Reuse for retries to return the same saved result for 24 hours."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "continue_company_research",
+      "description": "Confirm a pending company research request, choose the matching company candidate, or refresh saved research. Spends research allowance and requires conversation confirmation. Operations: confirm | select | refresh. Returns the response envelope; nextActions list what the user can do next, primary first. Use confirm: false for a preview, then repeat identical inputs with confirm: true and the preview confirmationToken after the user confirms.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "confirm",
+              "select",
+              "refresh"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "researchId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "confirmed": {
+            "const": true,
+            "description": "The confirmed supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Set to true only after the user has explicitly confirmed this action in the conversation. Describe what will change to the user first."
+          },
+          "confirmationToken": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Token returned by the preview. Send it unchanged with confirm: true; it is valid for 15 minutes and only for the previewed inputs."
+          },
+          "candidateIndex": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The candidate index supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "sectionIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maxItems": 20,
+            "description": "The section ids supplied by the user. Follow the type and allowed values in this schema."
+          }
+        },
+        "required": [
+          "operation",
+          "confirm"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "practice_interview",
+      "description": "Practice written interviews: create, start, answer, finish or review. Read a session with get_item operation=interview. Answers must come from the user. Live interviews are available in the dashboard. Operations: create | start | answer | finish | review. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "create",
+              "start",
+              "answer",
+              "finish",
+              "review"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "mode": {
+            "enum": [
+              "written"
+            ],
+            "description": "Optional. Omit to use the written practice default; do not ask the user unless they request this setting.",
+            "type": "string"
+          },
+          "resumeId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "jobId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Saved job identifier returned by its list or create tool."
+          },
+          "jdText": {
+            "type": "string",
+            "maxLength": 12500,
+            "description": "The jd text supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "roleTitle": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "The role title supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "language": {
+            "type": "string",
+            "description": "Optional. Omit to infer the posting language, else conversation language, else account language; do not ask the user unless they request this setting.",
+            "enum": [
+              "af",
+              "sq",
+              "am",
+              "ar",
+              "bn",
+              "bg",
+              "ca",
+              "zh-CN",
+              "zh-TW",
+              "cs",
+              "da",
+              "nl",
+              "en-US",
+              "fi",
+              "fr",
+              "de",
+              "el",
+              "he",
+              "hi",
+              "hu",
+              "id",
+              "it",
+              "ja",
+              "kn",
+              "km",
+              "ko",
+              "lv",
+              "lt",
+              "ms",
+              "ml-IN",
+              "mr",
+              "ne-NP",
+              "no",
+              "or",
+              "fa",
+              "pl",
+              "pt-PT",
+              "pt-BR",
+              "ro",
+              "ru",
+              "sr",
+              "es-ES",
+              "sv-SE",
+              "ta",
+              "te",
+              "th",
+              "tr",
+              "uk",
+              "uz",
+              "vi",
+              "en",
+              "es",
+              "pt"
+            ]
+          },
+          "interviewType": {
+            "enum": [
+              "behavioral",
+              "technical",
+              "case_system_design",
+              "general_intro"
+            ],
+            "description": "Optional. Omit to use the behavioral practice default; do not ask the user unless they request this setting.",
+            "type": "string"
+          },
+          "difficulty": {
+            "enum": [
+              "junior",
+              "mid",
+              "senior"
+            ],
+            "description": "Optional. Omit to use the mid-level practice default; do not ask the user unless they request this setting.",
+            "type": "string"
+          },
+          "questionCount": {
+            "anyOf": [
+              {
+                "enum": [
+                  5,
+                  10,
+                  15
+                ],
+                "type": "integer"
+              },
+              {
+                "enum": [
+                  3,
+                  4
+                ],
+                "type": "integer"
+              }
+            ],
+            "description": "Optional. Omit to use the default count (5 for new practice, 4 for review); do not ask the user unless they request this setting."
+          },
+          "persona": {
+            "enum": [
+              "formal_corporate",
+              "casual_startup"
+            ],
+            "description": "Optional. Omit to use the formal corporate default; do not ask the user unless they request this setting.",
+            "type": "string"
+          },
+          "customQuestions": {
+            "type": "array",
+            "maxItems": 15,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "description": "The custom questions supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Stable client-generated key. Reuse for retries to return the same saved result for 24 hours."
+          },
+          "sessionId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "questionId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Saved question identifier returned by its list or create tool."
+          },
+          "answerText": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "description": "The answer text supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "evaluateWritten": {
+            "type": "boolean",
+            "description": "Optional. Omit to use the default of false; do not ask the user unless they request this setting.",
+            "default": false
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "log_job",
+      "description": "Save or update application contacts, interactions and documents. Use operation=link_document for a resume or cover letter already in Democruit; operation=document is only for an uploaded file. Never sends a message or submits an application to an employer. Operations: contact | update_contact | interaction | update_interaction | document | link_document. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "contact",
+              "update_contact",
+              "interaction",
+              "update_interaction",
+              "document",
+              "link_document"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "jobApplicationId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ],
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "fullName": {
+            "type": "string",
+            "description": "The full name supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "role": {
+            "type": "string",
+            "description": "The role supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "email": {
+            "type": "string",
+            "description": "The email supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "phone": {
+            "type": "string",
+            "description": "The phone supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "linkedin": {
+            "type": "string",
+            "description": "The linkedin supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "notes": {
+            "type": "string",
+            "description": "The notes supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "contactId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "updates": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "role": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "company": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "email": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "phone": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "linkedin": {
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "const": ""
+                          },
+                          {
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "notes": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "minProperties": 1
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "application_submitted",
+                      "recruiter_call",
+                      "recruiter_message",
+                      "hiring_manager_chat",
+                      "referral_intro",
+                      "follow_up_sent",
+                      "general_interview",
+                      "technical_interview",
+                      "behavioral_interview",
+                      "take_home_assignment",
+                      "online_test",
+                      "offer_received",
+                      "offer_accepted",
+                      "offer_declined",
+                      "offer_rescinded",
+                      "rejected",
+                      "withdrawn",
+                      "ghosted",
+                      "note_added"
+                    ]
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "application",
+                      "contact",
+                      "interview",
+                      "assessment",
+                      "outcome",
+                      "other"
+                    ]
+                  },
+                  "date": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "notes": {
+                    "type": "string"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "type",
+                  "category",
+                  "date"
+                ],
+                "additionalProperties": false,
+                "minProperties": 1
+              }
+            ],
+            "description": "The updates supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "interactionType": {
+            "type": "string",
+            "enum": [
+              "application_submitted",
+              "recruiter_call",
+              "recruiter_message",
+              "hiring_manager_chat",
+              "referral_intro",
+              "follow_up_sent",
+              "general_interview",
+              "technical_interview",
+              "behavioral_interview",
+              "take_home_assignment",
+              "online_test",
+              "offer_received",
+              "offer_accepted",
+              "offer_declined",
+              "offer_rescinded",
+              "rejected",
+              "withdrawn",
+              "ghosted",
+              "note_added"
+            ],
+            "description": "The interaction type supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "application",
+              "contact",
+              "interview",
+              "assessment",
+              "outcome",
+              "other"
+            ],
+            "description": "The category supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "date": {
+            "type": "string",
+            "description": "The date supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "interactionId": {
+            "type": "string",
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "attachmentId": {
+            "type": "string",
+            "description": "Saved attachment identifier returned by its list or create tool."
+          },
+          "documentType": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "resume",
+                  "cover_letter",
+                  "offer_letter"
+                ]
+              },
+              {
+                "enum": [
+                  "resume",
+                  "cover_letter"
+                ],
+                "type": "string"
+              }
+            ],
+            "description": "The document type supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "referenceId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Saved reference identifier returned by its list or create tool."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Optional. Omit to generate the document name from the linked item; do not ask the user unless they request this setting."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "set_website_visibility",
+      "description": "Publish a website or take it offline. Both changes require conversation confirmation. Operations: set. Returns the response envelope; nextActions list what the user can do next, primary first. Use confirm: false for a preview, then repeat identical inputs with confirm: true and the preview confirmationToken after the user confirms.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "set"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "personalWebsiteId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "visibility": {
+            "enum": [
+              "PUBLIC",
+              "PRIVATE"
+            ],
+            "type": "string",
+            "description": "The visibility supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Set to true only after the user has explicitly confirmed this action in the conversation. Describe what will change to the user first."
+          },
+          "confirmationToken": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Token returned by the preview. Send it unchanged with confirm: true; it is valid for 15 minutes and only for the previewed inputs."
+          }
+        },
+        "required": [
+          "operation",
+          "confirm"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_website_domain",
+      "description": "Read the DNS status of a connected website domain. Poll every 15 seconds for up to 10 minutes. Use manage_website_domain operation=refresh to re-check DNS. Operations: status. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "status"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "personalWebsiteId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "detail": {
+            "type": "boolean",
+            "description": "Optional. Omit to use the default compact response; do not ask the user unless they request this setting.",
+            "default": false
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Optional. Omit to use the default first page; do not ask the user unless they request this setting."
+          },
+          "pollStartedAt": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Use the server-provided polling window timestamp from the previous next action."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "manage_website_domain",
+      "description": "Connect, disconnect or refresh a website domain. Connect and disconnect require conversation confirmation. Use check_website_domain to follow DNS status. Operations: connect | disconnect | refresh. Returns the response envelope; nextActions list what the user can do next, primary first. Use confirm: false for a preview, then repeat identical inputs with confirm: true and the preview confirmationToken after the user confirms.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "connect",
+              "disconnect",
+              "refresh"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "personalWebsiteId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ],
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "hostname": {
+            "type": "string",
+            "description": "The hostname supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Set to true only after the user has explicitly confirmed this action in the conversation. Describe what will change to the user first."
+          },
+          "confirmationToken": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Token returned by the preview. Send it unchanged with confirm: true; it is valid for 15 minutes and only for the previewed inputs."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "draft_text",
+      "description": "Draft career email, LinkedIn copy or resume bullets from real facts. Does not save, send email or post externally. Operations: email | linkedin_headline | linkedin_about | resume_bullets. Returns the response envelope; nextActions list what the user can do next, primary first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "email",
+              "linkedin_headline",
+              "linkedin_about",
+              "resume_bullets"
+            ],
+            "description": "Choose the task. Each operation accepts only its own fields."
+          },
+          "situation": {
+            "enum": [
+              "interview-follow-up",
+              "application-follow-up",
+              "thank-you",
+              "offer-negotiation",
+              "offer-acceptance",
+              "offer-decline",
+              "resignation",
+              "networking-introduction",
+              "referral-request",
+              "interview-scheduling",
+              "interview-rescheduling",
+              "application-withdrawal",
+              "recommendation-request"
+            ],
+            "type": "string",
+            "description": "The situation supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "jobApplicationId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "context": {
+            "type": "string",
+            "maxLength": 1200,
+            "description": "The context supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "recipient": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "The recipient supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "sender": {
+            "type": "string",
+            "maxLength": 120,
+            "description": "The sender supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "role": {
+            "type": "string",
+            "maxLength": 150,
+            "description": "The role supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "company": {
+            "type": "string",
+            "maxLength": 150,
+            "description": "The company supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "resumeId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional when exactly one candidate item exists: omit its ID to use that item. Ask which saved item to use only when several exist."
+          },
+          "targetRole": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "The target role supplied by the user. Follow the type and allowed values in this schema."
+          },
+          "experienceId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Saved experience identifier returned by its list or create tool."
+          },
+          "bullet": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "The bullet supplied by the user. Follow the type and allowed values in this schema."
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}
